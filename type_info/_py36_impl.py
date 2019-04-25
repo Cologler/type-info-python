@@ -112,6 +112,8 @@ def get_type_info(target):
     elif isinstance(target, type(typing.ClassVar)):
         raise TypeError('ClassVar is not a type')
 
-    else:
+    elif isinstance(target, type):
         return TypeInfo(target)
+
+    raise TypeError(f'{target!r} is not a type')
 

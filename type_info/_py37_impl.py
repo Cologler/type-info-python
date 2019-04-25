@@ -123,6 +123,8 @@ def get_type_info(target):
     elif isinstance(target, typing._SpecialForm):
         raise NotImplementedError(target)
 
-    else:
+    elif isinstance(target, type):
         return TypeInfo(target)
+
+    raise TypeError(f'{target!r} is not a type')
 
