@@ -73,7 +73,7 @@ class GenericTypeInfo(TypeInfo):
         if isinstance(value, GenericTypeInfo):
             return self.get_attrs_as_tuple() == value.get_attrs_as_tuple()
 
-        return False
+        return NotImplemented
 
     def get_attrs_as_tuple(self):
         return (
@@ -115,7 +115,7 @@ class TypeVarTypeInfo(TypeInfo):
                 value.__contravariant__
             )
 
-        return False
+        return NotImplemented
 
     def get_attrs_as_tuple(self):
         return (
