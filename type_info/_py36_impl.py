@@ -14,7 +14,7 @@ import contextlib
 from ._core import (
     STD_TYPES,
     TypeInfo, TypeVarTypeInfo, GenericTypeInfo,
-    get_any,
+    from_any, from_type, from_union,
 )
 
 _GENERICALIAS_GENERIC_DYNAMIC_MAP = {
@@ -63,7 +63,7 @@ _GENERICALIAS_GENERIC_DYNAMIC_MAP = {
 
 def get_type_info(target):
     if target is typing.Any:
-        return get_any()
+        return from_any()
 
     if isinstance(target, (typing.GenericMeta, type(typing.Union))):
         origin = target.__origin__
@@ -81,14 +81,10 @@ def get_type_info(target):
         args = tuple(get_type_info(g) for g in args)
 
         if generic_type is typing.Union:
-            # union should be a typevar
-            # this canbe parameter or return value
-            # so `covariant` and `contravariant` should be `False`
-            return TypeVarTypeInfo(target,
-                constraints=args,
-                covariant=False,
-                contravariant=False,
-            )
+            return from_union(target, args)
+
+        if generic_type is typing.Type:
+            return from_type(target, args)
 
         dynamic_type = _GENERICALIAS_GENERIC_DYNAMIC_MAP.get(generic_type)
 

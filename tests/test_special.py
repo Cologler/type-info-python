@@ -38,7 +38,6 @@ def test_generic():
         typing.Generic, (typing.KT, typing.VT), None
     )
 
-
 def test_optional():
     type_info = get_type_info(typing.Optional[str])
     assert typevar_as_tuple(type_info) == (
@@ -51,7 +50,9 @@ def test_tuple():
 def test_type():
     # pep484: Type[C] refers to subclasses of C
     type_info = get_type_info(typing.Type[str])
-    assert generic_as_tuple(type_info) == (typing.Type, (str, ), None)
+    typevar_as_tuple(type_info) == (
+        (str), True, False
+    )
 
 def test_type_var():
     assert typevar_as_tuple(get_type_info(

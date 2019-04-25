@@ -140,10 +140,32 @@ STD_TYPES = {
     collections.OrderedDict
 }
 
-def get_any():
+def from_any():
+    ''' get type info for `typing.Any` '''
     return TypeVarTypeInfo(
         typing.Any,
         constraints=(),
         covariant=False,
         contravariant=False
     )
+
+def from_type(target, args):
+    ''' get type info for `typing.Type[]` '''
+    # like: typing.Type[str]
+    return TypeVarTypeInfo(target,
+        constraints=args,
+        covariant=True,
+        contravariant=False,
+    )
+
+def from_union(target, args):
+    ''' get type info for `typing.Union[]` '''
+    # union should be a typevar
+    # this canbe parameter or return value
+    # so `covariant` and `contravariant` should be `False`
+    return TypeVarTypeInfo(target,
+        constraints=args,
+        covariant=False,
+        contravariant=False,
+    )
+

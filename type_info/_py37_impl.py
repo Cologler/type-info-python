@@ -14,7 +14,7 @@ import contextlib
 from ._core import (
     STD_TYPES,
     TypeInfo, TypeVarTypeInfo, GenericTypeInfo,
-    get_any,
+    from_any, from_type, from_union,
 )
 
 _GENERICALIAS_ORIGIN_GENERIC_MAP = {
@@ -69,7 +69,7 @@ if sys.version_info.micro > 1:
 
 def get_type_info(target):
     if target is typing.Any:
-        return get_any()
+        return from_any()
 
     if isinstance(target, typing._GenericAlias):
         origin = target.__origin__
@@ -77,14 +77,10 @@ def get_type_info(target):
         args = tuple(get_type_info(g) for g in args)
 
         if origin is typing.Union:
-            # union should be a typevar
-            # this canbe parameter or return value
-            # so `covariant` and `contravariant` should be `False`
-            return TypeVarTypeInfo(target,
-                constraints=args,
-                covariant=False,
-                contravariant=False,
-            )
+            return from_union(target, args)
+
+        elif origin is type:
+            return from_type(target, args)
 
         elif origin is typing.ClassVar:
             raise TypeError('ClassVar is not a type')
@@ -97,15 +93,11 @@ def get_type_info(target):
             else:
                 dynamic_type = None
 
-                if origin in (type, ):
-                    generic_type = typing.Type
-
-                elif origin is typing.Generic:
+                if origin is typing.Generic:
                     generic_type = origin
 
                 else:
-                    breakpoint()
-                    raise NotImplementedError
+                    raise NotImplementedError(origin)
 
             if dynamic_type in STD_TYPES:
                 std_type = dynamic_type
