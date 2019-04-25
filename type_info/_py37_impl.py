@@ -5,6 +5,7 @@
 #
 # ----------
 
+import sys
 import typing
 import collections
 import collections.abc
@@ -27,7 +28,6 @@ _GENERICALIAS_ORIGIN_GENERIC_MAP = {
     collections.Counter: typing.Counter,
     collections.defaultdict: typing.DefaultDict,
     collections.deque: typing.Deque,
-    collections.OrderedDict: typing.OrderedDict,
 
     # collections.abc
     collections.abc.AsyncGenerator: typing.AsyncGenerator,
@@ -61,8 +61,10 @@ _GENERICALIAS_ORIGIN_GENERIC_MAP = {
     contextlib.AbstractContextManager: typing.ContextManager,
 }
 
-def is_generic_info(target):
-    return get_generic_info(target) is None
+if sys.version_info.micro > 1:
+    _GENERICALIAS_ORIGIN_GENERIC_MAP.update({
+        collections.OrderedDict: typing.OrderedDict,
+    })
 
 def get_type_info(target):
     if isinstance(target, typing._GenericAlias):

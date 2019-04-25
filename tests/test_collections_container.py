@@ -5,8 +5,11 @@
 #
 # ----------
 
+import sys
 import typing
 import collections
+
+import pytest
 
 from type_info import get_type_info
 
@@ -32,6 +35,7 @@ def test_deque():
     assert generic_as_tuple(type_info) == (typing.Deque, (str, ), collections.deque)
     assert type_info.std_type is collections.deque
 
+@pytest.mark.skipif(sys.version_info[:3] < (3, 7, 2), reason='typing.OrderedDict was add on 3.7.2')
 def test_ordereddict():
     type_info = get_type_info(typing.OrderedDict[str, int])
     assert generic_as_tuple(type_info) == (typing.OrderedDict, (str, int), collections.OrderedDict)
