@@ -13,7 +13,8 @@ import contextlib
 
 from ._core import (
     STD_TYPES,
-    TypeInfo, TypeVarTypeInfo, GenericTypeInfo
+    TypeInfo, TypeVarTypeInfo, GenericTypeInfo,
+    get_any,
 )
 
 _GENERICALIAS_ORIGIN_GENERIC_MAP = {
@@ -67,6 +68,9 @@ if sys.version_info.micro > 1:
     })
 
 def get_type_info(target):
+    if target is typing.Any:
+        return get_any()
+
     if isinstance(target, typing._GenericAlias):
         origin = target.__origin__
         args = target.__args__
@@ -125,16 +129,7 @@ def get_type_info(target):
         )
 
     elif isinstance(target, typing._SpecialForm):
-        if target is typing.Any:
-            return TypeVarTypeInfo(
-                typing.Any,
-                constraints=(),
-                covariant=False,
-                contravariant=False
-            )
-
-        breakpoint()
-        raise NotImplementedError
+        raise NotImplementedError(target)
 
     else:
         return TypeInfo(target)

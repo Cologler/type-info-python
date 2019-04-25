@@ -139,3 +139,11 @@ STD_TYPES = {
     collections.deque,
     collections.OrderedDict
 }
+
+def get_any():
+    return TypeVarTypeInfo(
+        typing.Any,
+        constraints=(),
+        covariant=False,
+        contravariant=False
+    )
