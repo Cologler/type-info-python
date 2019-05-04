@@ -37,7 +37,9 @@ def test_list_opened():
     value_type_info = type_info.generic_args[0]
     assert not value_type_info.is_generic
     assert value_type_info.is_typevar
-    return value_type_info.get_attrs_as_tuple() == ((), False, False)
+    assert value_type_info.typevar_constraints == ()
+    assert value_type_info.typevar_covariant == False
+    assert value_type_info.typevar_contravariant == False
 
 def test_list():
     type_info = get_type_info(typing.List[str])
