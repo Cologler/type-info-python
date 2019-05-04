@@ -5,30 +5,21 @@
 #
 # ----------
 
+import abc
 import typing
 import collections
 
-class TypeInfo:
-    def __init__(self, target_type):
-        self.target_type = target_type
-
-    def __hash__(self):
-        return hash(TypeInfo) ^ hash(self.target_type)
-
-    def __eq__(self, value):
-        if self is value:
-            return True
-
-        if isinstance(value, TypeInfo):
-            return self.target_type == value.target_type
-
-        if isinstance(value, type):
-            return self.target_type == value
-
-        return super().__eq__(value)
+class ITypeInfo(abc.ABC):
+    def __init__(self, target_type, is_classvar=False):
+        self._target_type = target_type
+        self._is_classvar = is_classvar
 
     def __repr__(self):
         return f'{type(self).__name__}({self.target_type!r})'
+
+    @property
+    def target_type(self):
+        return self._target_type
 
     @property
     def is_generic(self):
@@ -41,20 +32,45 @@ class TypeInfo:
     def is_typevar(self):
         return False
 
+    @property
+    def is_classvar(self):
+        return self._is_classvar
 
-class GenericTypeInfo(TypeInfo):
-    def __init__(self, target_type, *,
-                 generic_type, generic_args, dynamic_type, std_type):
-        super().__init__(target_type)
 
-        self.generic_type = generic_type
-        self.generic_args = generic_args
+class TypeInfo(ITypeInfo):
+    def __hash__(self):
+        return hash(self._get_attrs_tuple())
+
+    def __eq__(self, value):
+        if self is value:
+            return True
+
+        if isinstance(value, type):
+            return self.target_type == value and not self.is_classvar
+
+        if type(value) is TypeInfo:
+            return self._get_attrs_tuple() == value._get_attrs_tuple()
+
+        return NotImplemented
+
+    def _get_attrs_tuple(self):
+        return (self._is_classvar, self._target_type)
+
+
+class GenericTypeInfo(ITypeInfo):
+    def __init__(self, target_type, **kwargs):
+        self.generic_type = kwargs.pop('generic_type')
+        self.generic_args = kwargs.pop('generic_args')
 
         # dynamic_type can be abs, std_type cannot be abs
         # `GenericTypeInfo(List[str]).std_type` is `list`
         # but `GenericTypeInfo(Iterable[str]).std_type` is None
-        self.dynamic_type = dynamic_type
-        self.std_type = std_type
+        self.dynamic_type = kwargs.pop('dynamic_type')
+        self.std_type = kwargs.pop('std_type')
+
+        super().__init__(target_type, **kwargs)
+
+    # from ITypeInfo
 
     @property
     def is_generic(self):
@@ -63,33 +79,36 @@ class GenericTypeInfo(TypeInfo):
     def is_generic_closed(self):
         return all(arg.is_generic_closed() for arg in self.generic_args)
 
+    #
+
     def __hash__(self):
-        return hash(self.get_attrs_as_tuple())
+        return hash(self._get_attrs_tuple())
 
     def __eq__(self, value):
         if self is value:
             return True
 
-        if isinstance(value, GenericTypeInfo):
-            return self.get_attrs_as_tuple() == value.get_attrs_as_tuple()
+        if type(value) is GenericTypeInfo:
+            return self._get_attrs_tuple() == value._get_attrs_tuple()
 
         return NotImplemented
 
-    def get_attrs_as_tuple(self):
+    def _get_attrs_tuple(self):
         return (
+            self._is_classvar,
             self.generic_type,
             self.generic_args
         )
 
 
-class TypeVarTypeInfo(TypeInfo):
-    def __init__(self, target_type, *,
-                 constraints, covariant, contravariant):
-        super().__init__(target_type)
+class TypeVarTypeInfo(ITypeInfo):
+    def __init__(self, target_type, **kwargs):
+        self.typevar_constraints = kwargs.pop('constraints')
+        self.typevar_covariant = kwargs.pop('covariant')
+        self.typevar_contravariant = kwargs.pop('contravariant')
+        super().__init__(target_type, **kwargs)
 
-        self.typevar_constraints = constraints
-        self.typevar_covariant = covariant
-        self.typevar_contravariant = contravariant
+    # from ITypeInfo
 
     def is_generic_closed(self):
         return False
@@ -98,27 +117,23 @@ class TypeVarTypeInfo(TypeInfo):
     def is_typevar(self):
         return True
 
+    #
+
     def __hash__(self):
-        return hash(self.get_attrs_as_tuple())
+        return hash(self._get_attrs_tuple())
 
     def __eq__(self, value):
         if self is value:
             return True
 
-        if isinstance(value, TypeVarTypeInfo):
-            return self.get_attrs_as_tuple() == value.get_attrs_as_tuple()
-
-        if isinstance(value, typing.TypeVar):
-            return self.get_attrs_as_tuple() == (
-                value.__constraints__,
-                value.__covariant__,
-                value.__contravariant__
-            )
+        if type(value) is TypeVarTypeInfo:
+            return self._get_attrs_tuple() == value._get_attrs_tuple()
 
         return NotImplemented
 
-    def get_attrs_as_tuple(self):
+    def _get_attrs_tuple(self):
         return (
+            self._is_classvar,
             self.typevar_constraints,
             self.typevar_covariant,
             self.typevar_contravariant

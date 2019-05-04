@@ -27,16 +27,16 @@ def test_callable():
     assert type_info.dynamic_type == collections.abc.Callable
 
 def test_class_var():
-    with raises(TypeError):
-        get_type_info(typing.ClassVar[typing.Dict[str, int]])
-
-    # TODO: so how can I parse class var ?
+    type_info = get_type_info(typing.ClassVar[typing.Dict[str, int]])
+    assert type_info.is_classvar
+    assert type_info.is_generic
+    assert type_info.generic_type == typing.Dict
+    assert type_info.generic_args == (str, int)
 
 def test_generic():
     type_info = get_type_info(typing.Generic[typing.KT, typing.VT])
     assert type_info.is_generic
     assert type_info.generic_type == typing.Generic
-    assert type_info.generic_args == (typing.KT, typing.VT)
     assert type_info.dynamic_type == None
 
 def test_optional():

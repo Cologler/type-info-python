@@ -83,7 +83,9 @@ def get_type_info(target):
             return from_type(target, args)
 
         elif origin is typing.ClassVar:
-            raise TypeError('ClassVar is not a type')
+            assert len(args) == 1
+            args[0]._is_classvar = True
+            return args[0]
 
         else:
             generic_type = _GENERICALIAS_ORIGIN_GENERIC_MAP.get(origin)

@@ -110,7 +110,10 @@ def get_type_info(target):
         )
 
     elif isinstance(target, type(typing.ClassVar)):
-        raise TypeError('ClassVar is not a type')
+        arg = target.__type__
+        type_info = get_type_info(arg)
+        type_info._is_classvar = True
+        return type_info
 
     elif isinstance(target, type):
         return TypeInfo(target)
