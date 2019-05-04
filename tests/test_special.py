@@ -12,6 +12,13 @@ from pytest import raises
 
 from type_info import get_type_info
 
+def test_default_types():
+    type_info = get_type_info(str)
+    assert not type_info.is_generic
+    assert not type_info.is_typevar
+    assert not type_info.is_classvar
+    assert type_info.target_type is str
+
 def test_any():
     type_info = get_type_info(typing.Any)
     assert type_info.is_typevar
