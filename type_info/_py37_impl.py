@@ -23,6 +23,7 @@ _GENERICALIAS_ORIGIN_GENERIC_MAP = {
     list: typing.List,
     set: typing.Set,
     tuple: typing.Tuple,
+    type: typing.Type,
 
     # collections
     collections.ChainMap: typing.ChainMap,
@@ -78,9 +79,6 @@ def get_type_info(target):
 
         if origin is typing.Union:
             return from_union(target, args)
-
-        elif origin is type:
-            return from_type(target, args)
 
         elif origin is typing.ClassVar:
             assert len(args) == 1

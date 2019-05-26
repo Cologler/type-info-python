@@ -146,6 +146,8 @@ STD_TYPES = {
     list,
     set,
     tuple,
+    type,
+    bytes,
 
     # collections
     collections.ChainMap,

@@ -59,10 +59,11 @@ def test_tuple():
 def test_type():
     # pep484: Type[C] refers to subclasses of C
     type_info = get_type_info(typing.Type[str])
-    assert type_info.is_typevar
-    assert type_info.typevar_constraints == (str, )
-    assert type_info.typevar_covariant == True
-    assert type_info.typevar_contravariant == False
+
+    assert type_info.is_generic
+    assert type_info.generic_type == typing.Type
+    assert type_info.generic_args == (str, )
+    assert type_info.std_type is type
 
 def test_type_var():
     type_info = get_type_info(typing.TypeVar('T'))

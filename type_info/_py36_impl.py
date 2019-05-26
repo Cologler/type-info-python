@@ -23,6 +23,7 @@ _GENERICALIAS_GENERIC_DYNAMIC_MAP = {
     typing.List: list,
     typing.Set: set,
     typing.Tuple: tuple,
+    typing.Type: type,
 
     # collections
     typing.ChainMap: collections.ChainMap,
