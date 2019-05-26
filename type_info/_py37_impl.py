@@ -62,7 +62,7 @@ _GENERICALIAS_ORIGIN_GENERIC_MAP = {
     contextlib.AbstractContextManager: typing.ContextManager,
 }
 
-if sys.version_info.micro > 1:
+if sys.version_info[:3] > (3, 7, 1):
     _GENERICALIAS_ORIGIN_GENERIC_MAP.update({
         collections.OrderedDict: typing.OrderedDict,
     })
