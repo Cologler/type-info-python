@@ -14,7 +14,7 @@ import contextlib
 from ._core import (
     STD_TYPES,
     TypeInfo, TypeVarTypeInfo, GenericTypeInfo,
-    from_any, from_type, from_union,
+    from_any, from_union,
 )
 
 _GENERICALIAS_GENERIC_DYNAMIC_MAP = {
@@ -83,9 +83,6 @@ def get_type_info(target):
 
         if generic_type is typing.Union:
             return from_union(target, args)
-
-        if generic_type is typing.Type:
-            return from_type(target, args)
 
         dynamic_type = _GENERICALIAS_GENERIC_DYNAMIC_MAP.get(generic_type)
 

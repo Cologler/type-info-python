@@ -166,15 +166,6 @@ def from_any():
         contravariant=False
     )
 
-def from_type(target, args):
-    ''' get type info for `typing.Type[]` '''
-    # like: typing.Type[str]
-    return TypeVarTypeInfo(target,
-        constraints=args,
-        covariant=True,
-        contravariant=False,
-    )
-
 def from_union(target, args):
     ''' get type info for `typing.Union[]` '''
     # union should be a typevar

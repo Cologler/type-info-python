@@ -14,7 +14,7 @@ import contextlib
 from ._core import (
     STD_TYPES,
     TypeInfo, TypeVarTypeInfo, GenericTypeInfo,
-    from_any, from_type, from_union,
+    from_any, from_union,
 )
 
 _GENERICALIAS_ORIGIN_GENERIC_MAP = {
