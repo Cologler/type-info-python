@@ -5,7 +5,6 @@
 #
 # ----------
 
-import sys
 import typing
 import collections
 import collections.abc

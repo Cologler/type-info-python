@@ -6,7 +6,6 @@
 # ----------
 
 import typing
-import collections
 
 from type_info import get_type_info
 
@@ -38,8 +37,8 @@ def test_list_opened():
     assert not value_type_info.is_generic
     assert value_type_info.is_typevar
     assert value_type_info.typevar_constraints == ()
-    assert value_type_info.typevar_covariant == False
-    assert value_type_info.typevar_contravariant == False
+    assert value_type_info.typevar_covariant is False
+    assert value_type_info.typevar_contravariant is False
 
 def test_list():
     type_info = get_type_info(typing.List[str])

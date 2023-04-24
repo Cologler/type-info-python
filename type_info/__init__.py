@@ -14,3 +14,7 @@ if sys.version_info.minor > 6:
 
 elif sys.version_info.minor == 6:
     from ._py36_impl import get_type_info
+
+__all__ = [
+    'get_type_info'
+]
